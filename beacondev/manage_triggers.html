@@ -29,17 +29,17 @@
 	      <span class="icon-bar"></span>
 	      <span class="icon-bar"></span>
 	    </button>
-	    <a class="navbar-brand" href="#">Crosswords Dashboard</a>
+	    <a class="navbar-brand" href="#">Crossword Dashboard</a>
 	  </div>
 	
 	  <!-- Collect the nav links, forms, and other content for toggling -->
 	  <div class="collapse navbar-collapse navbar-ex1-collapse">
-	    <ul class="nav navbar-nav">
-	      <li><a href="./overview">Overview</a></li>
-	      <li><a href="./statistics">Statistics</a></li>
-	      <li><a href="./beacons">Manage Beacons</a></li>
-	      <li><a href="./groups">Manage Groups</a></li>
-	      <li class="active"><a href="./triggers">Manage Triggers</a></li>
+	    	    <ul class="nav navbar-nav">
+	      <li><a href="#">Overview</a></li>
+	      <li><a href="#">Statistics</a></li>
+	      <li><a href="/beacons">Manage Beacons</a></li>
+	      <li><a href="/groups">Manage Groups</a></li>
+	      <li class="active"><a href="/triggers">Manage Triggers</a></li>
 	      
 	    </ul>
 	    <ul class="nav navbar-nav navbar-right">
@@ -69,11 +69,11 @@
     	<div> <!-- List of groups -->
     	<div class="row">
 	      	<div class="col-md-10" style="padding:10px;">
-		      	{% foreach trigger in triggers %}
+		      	{% for trigger in triggers %}
 	      		<div class="thumbnail" style="padding:10px;"><!-- Single group -->
 			    	<div class="row">
 			    	<div class="col-md-12">
-				    	<h4><strong><a href="#">{{ group.nickname }}</a></strong></h4>
+				    	<h4><strong><a href="#">{{ trigger.nickname }}</a></strong></h4>
 				    </div>
 				</div>
 					<div class="row">
@@ -96,14 +96,14 @@
 					<div class="col-md-9">
 				    	<p>
 				          <i class="icon-user"></i> Beacons(s): 
-				          {% foreach beacon in trigger.groupbeacons %}
-				          	<a href="./beacons/{{ beacon.id }}"><span class="label label-info"> {{ beacon.name }}</span></a>
+				          {% for beacon in trigger.beacons %}
+				          	<a href="./beacons/{{ beacon.id }}"><span class="label label-info"> {{ beacon.nickname }}</span></a>
 				          {% endfor %}
 				    	</p>
 				    	<p>
 				          <i class="icon-user"></i> Groups(s): 
-				          {% foreach group in trigger.groups %}
-				          	<a href="./groups/{{ groups.id }}"><span class="label label-warning"> {{ group.name }}</span></a>
+				          {% for group in trigger.groups %}
+				          	<a href="./groups/{{ group.id }}"><span class="label label-warning"> {{ group.nickname }}</span></a>
 				          {% endfor %}
 				    	</p>
 					</div>
@@ -112,18 +112,18 @@
 						</div>
 			    </div>
 				</div><!-- End Single group -->
+				<hr>
 				{% endfor %}
 	      	</div>
 		  </div>
 	   </div><!-- End List -->
-	   {% endif%}
 	   {% else %}
 	   <div class="row">
 	   		<div class="col-md-8">
 	   			<h1>You currently have no triggers</h1>
 	   		</div>
 	   </div>
-	   {% endelse %}
+	   {% endif %}
 	   
     </div> 
     <!-- /container -->

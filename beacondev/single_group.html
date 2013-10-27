@@ -31,16 +31,16 @@
 	      <span class="icon-bar"></span>
 	      <span class="icon-bar"></span>
 	    </button>
-	    <a class="navbar-brand" href="#">Crossword Dashboard</a>
+	    <a class="navbar-brand" href="#">Crosswords Dashboard</a>
 	  </div>
 	
 	  <!-- Collect the nav links, forms, and other content for toggling -->
 	  <div class="collapse navbar-collapse navbar-ex1-collapse">
-	    	    <ul class="nav navbar-nav">
+	    <ul class="nav navbar-nav">
 	      <li><a href="#">Overview</a></li>
 	      <li><a href="#">Statistics</a></li>
-	      <li class="active"><a href="/beacons">Manage Beacons</a></li>
-	      <li><a href="/groups">Manage Groups</a></li>
+	      <li><a href="/beacons">Manage Beacons</a></li>
+	      <li class="active"><a href="/groups">Manage Groups</a></li>
 	      <li><a href="/triggers">Manage Triggers</a></li>
 	      
 	    </ul>
@@ -61,17 +61,17 @@
 
 	
     <div class="container">
-    	{% if beacon.valid %}
-		    	{% if beacon.notnew %}
+    	{% if group.valid %}
+		    	{% if group.notnew %}
 		    	<div class="row" style="padding:10px;">
 		    		<div class="alert alert-info">
-		    			<h4><strong>Beacon Properties</strong></h4>
-		    			<p>Add/edit your beacon properties here</p>
+		    			<h4><strong>Group Properties</strong></h4>
+		    			<p>Add/edit your group properties here</p>
 		    		</div>
 		    	</div>
 		    	<div class="row">
 			    	<div class="col-md-8">
-					    <form class="form-horizontal" action="/addbeacon" method="POST">
+					    <form class="form-horizontal" action="/addgroup" method="POST">
 							<fieldset>
 		
 							
@@ -80,36 +80,25 @@
 							  <label class="col-md-4 control-label" for="nickname">Nickname</label>  
 							  <div class="col-md-8">
 							  
-							  <input id="nickname" name="nickname" type="text" placeholder="Blue Beacon" value="{{ beacon.nickname }}" class="form-control input-md" required="">
+							  <input id="nickname" name="nickname" type="text" placeholder="Blue Beacon" value="{{ group.nickname }}" class="form-control input-md" required="">
 							  <span class="help-block">Nicknames are only used for your convenience. </span>  
-							  </div>
-							</div>
-							
-							<!-- Text input-->
-							<div class="form-group">
-							  <label class="col-md-4 control-label" for="beaconid">Beacon UUID</label>  
-							  <div class="col-md-8">
-							  <input id="beaconid" name="beaconuuid" type="text" placeholder="Ex. 124414" value="{{ beacon.uuid }}" class="form-control input-md" required="">
-							  <input type='hidden' name='beaconid' value='{{beacon.id}}' />
-							  <span class="help-block">Your Beacon's Unique Identifier</span>  
 							  </div>
 							</div>
 							
 							<!-- Multiple Checkboxes -->
 							<div class="form-group">
-							  <label class="col-md-4 control-label" for="checkboxes">Select Groups</label>
+							  <label class="col-md-4 control-label" for="checkboxes">Select Triggers</label>
 							  <div class="col-md-8">
-							  {% for group in beacon.groups %}
+							  {% for trigger in group.triggers %}
 							  <div class="checkbox">
 							    <label for="groupid">
-							      <input type="checkbox" name="groupid" id="groupid" value="{{group.id}}" 
-							      {% if group.valid %}checked{%endif%}>{{group.nickname}}</label>
+							      <input type="checkbox" name="groupid" id="groupid" value="{{trigger.id}}" 
+							      {% if group.valid %}checked{%endif%}>{{trigger.nickname}}</label>
 								</div>
 							{% endfor %}
 							<span class="help-block">Select one or more groups</span>
 							</div>
 							</div>
-							
 							
 							<!-- Button -->
 							<div class="form-group">
@@ -126,13 +115,13 @@
 		    	{% else %}
 		    	<div class="row" style="padding:10px;">
 		    		<div class="alert alert-info">
-		    			<h4><strong>Beacon Properties</strong></h4>
-		    			<p>Add/edit your beacon properties here</p>
+		    			<h4><strong>Group Properties</strong></h4>
+		    			<p>Add/edit your group properties here</p>
 		    		</div>
 		    	</div>
 		    	<div class="row">
 			    	<div class="col-md-8">
-					    <form class="form-horizontal" action="/addbeacon" method="POST">
+					    <form class="form-horizontal" action="/addgroup" method="POST">
 							<fieldset>
 		
 							
@@ -146,24 +135,17 @@
 							  </div>
 							</div>
 							
-							<!-- Text input-->
-							<div class="form-group">
-							  <label class="col-md-4 control-label" for="beaconid">Beacon UUID</label>  
-							  <div class="col-md-8">
-							  <input id="beaconid" name="beaconuuid" type="text" placeholder="Ex. 124414" class="form-control input-md" required="">
-							  <span class="help-block">Your Beacon's Unique Identifier</span>  
-							  </div>
-							</div>
-							{% if beacon.groups %}
+							{% if group.triggers %}
 							<!-- Multiple Checkboxes -->
 							<div class="form-group">
-							  <label class="col-md-4 control-label" for="checkboxes">Select Groups</label>
+							  <label class="col-md-4 control-label" for="checkboxes">Select Triggers</label>
 							  <div class="col-md-8">
-							  {% for group in beacon.groups %}
+							  {% for trigger in group.triggerids %}
 							  <div class="checkbox">
 							    <label for="groupid">
-							      <input type="checkbox" name="groupid" id="groupid" value="{{group.id}}" 
-							      {% if group.valid %}checked{%endif%}>{{group.nickname}}</label>
+							      <input type="checkbox" name="groupid" id="groupid" value="{{trigger.id}}" 
+							      
+							      {% if group.valid %}checked{%endif%}>{{trigger.nickname}}</label>
 							   </div>
 							{% endfor %}
 							<span class="help-block">Select one or more groups</span>
@@ -179,7 +161,7 @@
 							<div class="form-group">
 							  <label class="col-md-4 control-label" for="submit">and lastly</label>
 							  <div class="col-md-5">
-							    <button id="submit" name="submit" class="btn btn-success">Add Beacon</button>
+							    <button id="submit" name="submit" class="btn btn-success">Add Group</button>
 							  </div>
 							</div>
 							
