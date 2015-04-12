@@ -2,10 +2,14 @@
 #     Cleverly Beacon Backend     #
 #######################################
 
-import webapp2
-from google.appengine.ext import db
 import os
+
 from google.appengine.ext.webapp import template
+
+from models import Beacon, Group, Trigger
+
+import webapp2
+
 
 TRIGGER_IMMEDIATE = 0
 TRIGGER_NEAR = 1
@@ -17,36 +21,17 @@ LINK_COUPON = 3
 
 
 def render_template(self, template_name, template_values):
-    path = os.path.join(os.path.dirname(__file__), template_name)
-    self.response.out.write(template.render(path+'.html', template_values))
+    template_path = os.path.join(
+        os.path.dirname(__file__),
+        'templates',
+        template_name
+    )
+    self.response.out.write(template.render(template_path, template_values))
 
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
         self.response.write('Beacon Dev Backend')
-
-
-class Beacon(db.Model):
-    nickname = db.StringProperty()
-    beaconuuid = db.StringProperty()
-    groupids = db.ListProperty(int)
-    description = db.TextProperty()
-
-
-class Group(db.Model):
-    nickname = db.StringProperty()
-    triggerids = db.ListProperty(int)
-    description = db.TextProperty()
-
-
-class Trigger(db.Model):
-    nickname = db.StringProperty()
-    # 0 for image, 1 for video, 2 for advert, 3 for coupon
-    linktype = db.IntegerProperty()
-    description = db.StringProperty()
-    triggerlink = db.StringProperty()
-    # 0 for immediate, 1 for near and 2 for far
-    triggerwhen = db.IntegerProperty()
 
 
 class SingleBeacon(webapp2.RequestHandler):
@@ -81,7 +66,7 @@ class SingleBeacon(webapp2.RequestHandler):
                 "notnew": False,
             }
         final = {"beacon": beaconjson}
-        render_template(self, "single_beacon", final)
+        render_template(self, "single_beacon.html", final)
 
 
 class SingleGroup(webapp2.RequestHandler):
@@ -116,7 +101,7 @@ class SingleGroup(webapp2.RequestHandler):
                 "valid": True,
             }
         final = {"group": groupjson}
-        render_template(self, "single_group", final)
+        render_template(self, "single_group.html", final)
 
 
 class SingleTrigger(webapp2.RequestHandler):
@@ -152,7 +137,7 @@ class SingleTrigger(webapp2.RequestHandler):
                 "valid": True,
             }
         final = {"trigger": triggerjson}
-        render_template(self, "single_trigger", final)
+        render_template(self, "single_trigger.html", final)
 
 
 class ListBeacons(webapp2.RequestHandler):
@@ -184,7 +169,7 @@ class ListBeacons(webapp2.RequestHandler):
             beacondetails.append(valuepair)
         final = {}
         final.update({'beacons': beacondetails})
-        render_template(self, 'manage_beacons', final)
+        render_template(self, 'manage_beacons.html', final)
 
 
 class AddBeacon(webapp2.RequestHandler):
@@ -253,7 +238,7 @@ class ListGroups(webapp2.RequestHandler):
             valuepair.update({'beacons': grpbea, 'triggers': grptri})
             groupdetails.append(valuepair)
         final = {'groups': groupdetails}
-        render_template(self, 'manage_groups', final)
+        render_template(self, 'manage_groups.html', final)
 
 
 class AddGroup(webapp2.RequestHandler):
@@ -319,7 +304,7 @@ class ListTriggers(webapp2.RequestHandler):
             valuepair.update({'groups': trigrp, 'beacons': tribea})
             triggerdetails.append(valuepair)
         final = {'triggers': triggerdetails}
-        render_template(self, 'manage_triggers', final)
+        render_template(self, 'manage_triggersi.html', final)
 
 
 class AddTrigger(webapp2.RequestHandler):
@@ -434,7 +419,7 @@ class TestTemplate(webapp2.RequestHandler):
             'id': 5136918324969472
         }
         values = {'beacon': beacon}
-        render_template(self, 'single_beacon', values)
+        render_template(self, 'single_beacon.html', values)
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
