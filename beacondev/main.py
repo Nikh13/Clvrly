@@ -17,99 +17,144 @@ LINK_ADVERT = 2
 LINK_COUPON = 3
 
 
-def render_template(self,template_name,template_values):
-	path = os.path.join(os.path.dirname(__file__), template_name)
-	self.response.out.write(template.render(path+'.html', template_values))
+def render_template(self, template_name, template_values):
+    path = os.path.join(os.path.dirname(__file__), template_name)
+    self.response.out.write(template.render(path+'.html', template_values))
+
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
         self.response.write('Beacon Dev Backend')
 
+
 class Beacon(db.Model):
-	nickname = db.StringProperty() 
-	beaconuuid = db.StringProperty()
-	groupids = db.ListProperty(int) 
-	description = db.TextProperty()
+    nickname = db.StringProperty()
+    beaconuuid = db.StringProperty()
+    groupids = db.ListProperty(int)
+    description = db.TextProperty()
+
 
 class Group(db.Model):
-	nickname = db.StringProperty()
-	triggerids = db.ListProperty(int)
-	description = db.TextProperty() 
+    nickname = db.StringProperty()
+    triggerids = db.ListProperty(int)
+    description = db.TextProperty()
+
 
 class Trigger(db.Model):
-	nickname = db.StringProperty()
-	linktype = db.IntegerProperty() # 0 for image, 1 for video, 2 for advert, 3 for coupon
-	description = db.StringProperty()
-	triggerlink = db.StringProperty()
-	triggerwhen = db.IntegerProperty() # 0 for immediate, 1 for near and 2 for far
+    nickname = db.StringProperty()
+    # 0 for image, 1 for video, 2 for advert, 3 for coupon
+    linktype = db.IntegerProperty()
+    description = db.StringProperty()
+    triggerlink = db.StringProperty()
+    # 0 for immediate, 1 for near and 2 for far
+    triggerwhen = db.IntegerProperty()
 
 
 class SingleBeacon(webapp2.RequestHandler):
-	def get(self, key):
-		if key != 'add':
-			beacon = Beacon.get_by_id(int(key))
-			if beacon:
-				beaconjson = {"valid":True,"nickname":beacon.nickname,"id":key,"notnew":True,"uuid":beacon.beaconuuid}
-				groups = []
-				for group in Group.all():
-					groupjson = {"nickname":group.nickname,"id":group.key().id()}
-					if group.key().id() in beacon.groupids:
-						groupjson.update({"valid":True})
-					else:
-						groupjson.update({"valid":False})
-					groups.append(groupjson)
-				beaconjson.update({"groups":groups})
-			else:
-				beaconjson = {"valid":True,"nickname":None,"groups":None,"notnew":False}
-		else:
-			beaconjson = {"valid":True,"nickname":None,"groups":None,"notnew":False}
-		final = {"beacon":beaconjson}
-		render_template(self,"single_beacon",final)
-		#self.response.write(beaconjson)
+    def get(self, key):
+        if key != 'add':
+            beacon = Beacon.get_by_id(int(key))
+            if beacon:
+                beaconjson = {
+                    "valid": True,
+                    "nickname": beacon.nickname,
+                    "id": key,
+                    "notnew": True,
+                    "uuid": beacon.beaconuuid
+                }
+                groups = []
+                for group in Group.all():
+                    groupjson = {
+                        "nickname": group.nickname,
+                        "id": group.key().id()
+                    }
+                    if group.key().id() in beacon.groupids:
+                        groupjson.update({"valid": True})
+                    else:
+                        groupjson.update({"valid": False})
+                    groups.append(groupjson)
+                beaconjson.update({"groups": groups})
+        else:
+            beaconjson = {
+                "valid": True,
+                "nickname": None,
+                "groups": None,
+                "notnew": False,
+            }
+        final = {"beacon": beaconjson}
+        render_template(self, "single_beacon", final)
+
 
 class SingleGroup(webapp2.RequestHandler):
-	def get(self, key):
-		if key != 'add':
-			group = Group.get_by_id(int(key))
-			if group:
-				groupjson = {"id":key,"nickname":group.nickname,"valid":True,"notnew":True}
-				triggers = []
-				for trigger in Trigger.all():
-					triggerjson = {"nickname":trigger.nickname,"id":trigger.key().id()}
-					if trigger.key().id() in group.triggerids:
-						triggerjson.update({"valid":True})
-					else:
-						triggerjson.update({"valid":False})
-					triggers.append(triggerjson)
-				groupjson.update({"triggers":triggers})
-			else:
-				groupjson = {"nickname":None,"triggers":None,"notnew":False,"valid":True}
-		else:
-			groupjson = {"nickname":None,"triggers":None,"notnew":False,"valid":True}
-		final = {"group":groupjson}
-		render_template(self,"single_group",final)
+
+    def get(self, key):
+        if key != 'add':
+            group = Group.get_by_id(int(key))
+            if group:
+                groupjson = {
+                    "id": key,
+                    "nickname": group.nickname,
+                    "valid": True,
+                    "notnew": True
+                }
+                triggers = []
+                for trigger in Trigger.all():
+                    triggerjson = {
+                        "nickname": trigger.nickname,
+                        "id": trigger.key().id(),
+                    }
+                    if trigger.key().id() in group.triggerids:
+                        triggerjson.update({"valid": True})
+                    else:
+                        triggerjson.update({"valid": False})
+                    triggers.append(triggerjson)
+                groupjson.update({"triggers": triggers})
+        else:
+            groupjson = {
+                "nickname": None,
+                "triggers": None,
+                "notnew": False,
+                "valid": True,
+            }
+        final = {"group": groupjson}
+        render_template(self, "single_group", final)
+
 
 class SingleTrigger(webapp2.RequestHandler):
-	def get(self, key):
-		if key !='add':
-			trigger = Trigger.get_by_id(int(key))
-			if trigger:
-				triggerjson = {"id":key,"nickname":trigger.nickname,"linktype":trigger.linktype,"triggerlink":trigger.triggerlink,"valid":True,"notnew":True}
-				groups = []
-				for group in Group.all():
-					groupjson = {"nickname":group.nickname,"id":group.key().id()}
-					if key in group.triggerids:
-						groupjson.update({"valid":True})
-					else:
-						groupjson.update({"valid":False})
-					groups.append(groupjson)
-				triggerjson.update({"groups":groups})
-			else:
-				triggerjson = {"nickname":None,"groups":None,"notnew":False,"valid":True}
-		else:
-			triggerjson = {"nickname":None,"groups":None,"notnew":False,"valid":True}
-		final = {"trigger":triggerjson}
-		render_template(self,"single_trigger",final)	
+    def get(self, key):
+        if key != 'add':
+            trigger = Trigger.get_by_id(int(key))
+            if trigger:
+                triggerjson = {
+                    "id": key,
+                    "nickname": trigger.nickname,
+                    "linktype": trigger.linktype,
+                    "triggerlink": trigger.triggerlink,
+                    "valid": True,
+                    "notnew": True,
+                }
+                groups = []
+                for group in Group.all():
+                    groupjson = {
+                        "nickname": group.nickname,
+                        "id": group.key().id()
+                    }
+                    if key in group.triggerids:
+                        groupjson.update({"valid": True})
+                    else:
+                        groupjson.update({"valid": False})
+                    groups.append(groupjson)
+                triggerjson.update({"groups": groups})
+        else:
+            triggerjson = {
+                "nickname": None,
+                "groups": None,
+                "notnew": False,
+                "valid": True,
+            }
+        final = {"trigger": triggerjson}
+        render_template(self, "single_trigger", final)
+
 
 class ListBeacons(webapp2.RequestHandler):
 	def get(self):
@@ -142,31 +187,38 @@ class ListBeacons(webapp2.RequestHandler):
 		final.update ({'beacons':beacondetails})
 		render_template(self,'manage_beacons',final)
 
+
 class AddBeacon(webapp2.RequestHandler):
-	def post(self):
-		beaconid = self.request.get("beaconid")
-		nickname = self.request.get("nickname")
-		beaconuuid= self.request.get("beaconuuid")
-		groupid = self.request.get_all("groupid")
-		groupids=[]
-		for g in groupid:
-			groupids.append(int(g))
-		description = self.request.get("description")
-		try:
-			keyid=int(beaconid)
-			beacon = Beacon.get_by_id(keyid)
-		except Exception, e:
-			beacon = None
-		if beacon == None:
-			beacon = Beacon(nickname = nickname, beaconuuid = beaconuuid, groupids = groupids, description = description)
-			beacon.put()
-		else:
-			beacon.nickname=nickname
-			beacon.beaconuuid=beaconuuid
-			beacon.groupids=groupids
-			beacon.description=description
-			beacon.put()
-		self.redirect("/beacons")
+    def post(self):
+        beaconid = self.request.get("beaconid")
+        nickname = self.request.get("nickname")
+        beaconuuid = self.request.get("beaconuuid")
+        groupid = self.request.get_all("groupid")
+        groupids = []
+        for g in groupid:
+            groupids.append(int(g))
+        description = self.request.get("description")
+        try:
+            keyid = int(beaconid)
+            beacon = Beacon.get_by_id(keyid)
+        except Exception, e:
+            beacon = None
+        if beacon is None:
+            beacon = Beacon(
+                nickname=nickname,
+                beaconuuid=beaconuuid,
+                groupids=groupids,
+                description=description
+            )
+            beacon.put()
+        else:
+            beacon.nickname = nickname
+            beacon.beaconuuid = beaconuuid
+            beacon.groupids = groupids
+            beacon.description = description
+            beacon.put()
+        self.redirect("/beacons")
+
 
 class ListGroups(webapp2.RequestHandler):
 	def get(self):
@@ -191,7 +243,7 @@ class ListGroups(webapp2.RequestHandler):
 			valuepair.update({'beacons':grpbea,'triggers':grptri})
 			groupdetails.append(valuepair)
 		final = {'groups':groupdetails}
-		render_template(self,'manage_groups',final)					
+		render_template(self,'manage_groups',final)
 
 class AddGroup(webapp2.RequestHandler):
 	def post(self):
@@ -257,7 +309,11 @@ class AddTrigger(webapp2.RequestHandler):
 		except Exception, e:
 			trigger = None
 		if trigger == None:
-			trigger = Trigger(nickname = nickname, description = description, triggerlink=triglink, linktype=int(trigtype), triggerwhen = int(trigwhen))
+			trigger = Trigger(nickname = nickname,
+                     description = description,
+                     triggerlink=triglink,
+                     linktype=int(trigtype),
+                     triggerwhen = int(trigwhen))
 			trigger.put()
 		else:
 			trigger.nickname=nickname
