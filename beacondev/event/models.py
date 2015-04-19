@@ -9,6 +9,11 @@ class Buildings(messages.Enum):
 
 
 class Event(ndb.Model):
+    namespace = ndb.StringProperty()
     name = ndb.StringProperty()
     time = ndb.DateTimeProperty()
     building = msgprop.EnumProperty(Buildings, required=True)
+
+    def save(self, *args, **kwargs):
+        self.namespace = "Event"
+        super(Event, self).save()

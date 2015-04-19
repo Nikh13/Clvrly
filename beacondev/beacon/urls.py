@@ -1,4 +1,4 @@
-from views import *
+from beacon.views import *
 
 urlconfs = [
     ('/addtrigger', AddTrigger),

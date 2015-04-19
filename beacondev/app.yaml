@@ -25,6 +25,4 @@ handlers:
 libraries:
 - name: webapp2
   version: latest
-- name: jinga2
-  version: latest
 

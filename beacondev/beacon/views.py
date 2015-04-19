@@ -2,7 +2,7 @@ import os
 
 from google.appengine.ext.webapp import template
 
-from models import Beacon, Group, Trigger
+from beacon.models import Beacon, Group, Trigger
 
 import webapp2
 
