@@ -8,6 +8,8 @@ from beacon.models import Beacon, Group, Trigger
 
 import webapp2
 
+from utils import JINJA_ENVIRONMENT
+
 
 def render_template(self, template_name, template_values):
     template_path = os.path.join(
@@ -51,7 +53,8 @@ class SingleBeacon(webapp2.RequestHandler):
                 "notnew": False,
             }
         final = {"beacon": beaconjson}
-        render_template(self, "single_beacon.html", final)
+        template = JINJA_ENVIRONMENT.get_template('single_beacon.html')
+        self.response.write(template.render(final))
 
 
 class SingleGroup(webapp2.RequestHandler):
@@ -87,7 +90,9 @@ class SingleGroup(webapp2.RequestHandler):
                 "valid": True,
             }
         final = {"group": groupjson}
-        render_template(self, "single_group.html", final)
+
+        template = JINJA_ENVIRONMENT.get_template('single_group.html')
+        self.response.write(template.render(final))
 
 
 class SingleTrigger(webapp2.RequestHandler):
@@ -124,7 +129,8 @@ class SingleTrigger(webapp2.RequestHandler):
                 "valid": True,
             }
         final = {"trigger": triggerjson}
-        render_template(self, "single_trigger.html", final)
+        template = JINJA_ENVIRONMENT.get_template('single_trigger.html')
+        self.response.write(template.render(final))
 
 
 class ListBeacons(webapp2.RequestHandler):
@@ -156,7 +162,8 @@ class ListBeacons(webapp2.RequestHandler):
             beacondetails.append(valuepair)
         final = {}
         final.update({'beacons': beacondetails})
-        render_template(self, 'manage_beacons.html', final)
+        template = JINJA_ENVIRONMENT.get_template('manage_beacons.html')
+        self.response.write(template.render(final))
 
 
 class AddBeacon(webapp2.RequestHandler):
@@ -225,7 +232,8 @@ class ListGroups(webapp2.RequestHandler):
             valuepair.update({'beacons': grpbea, 'triggers': grptri})
             groupdetails.append(valuepair)
         final = {'groups': groupdetails}
-        render_template(self, 'manage_groups.html', final)
+        template = JINJA_ENVIRONMENT.get_template('manage_groups.html')
+        self.response.write(template.render(final))
 
 
 class AddGroup(webapp2.RequestHandler):
@@ -291,7 +299,8 @@ class ListTriggers(webapp2.RequestHandler):
             valuepair.update({'groups': trigrp, 'beacons': tribea})
             triggerdetails.append(valuepair)
         final = {'triggers': triggerdetails}
-        render_template(self, 'manage_triggers.html', final)
+        template = JINJA_ENVIRONMENT.get_template('manage_triggers.html')
+        self.response.write(template.render(final))
 
 
 class AddTrigger(webapp2.RequestHandler):
