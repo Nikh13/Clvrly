@@ -18,28 +18,29 @@ def render_template(self, template_name, template_values):
 
 class SingleBeacon(webapp2.RequestHandler):
     def get(self, key):
+        beacon = None
         if key != 'add':
             beacon = Beacon.get_by_id(int(key))
-            if beacon:
-                beaconjson = {
-                    "valid": True,
-                    "nickname": beacon.nickname,
-                    "id": key,
-                    "notnew": True,
-                    "uuid": beacon.beaconuuid
+        if beacon:
+            beaconjson = {
+                "valid": True,
+                "nickname": beacon.nickname,
+                "id": key,
+                "notnew": True,
+                "uuid": beacon.beaconuuid
+            }
+            groups = []
+            for group in Group.all():
+                groupjson = {
+                    "nickname": group.nickname,
+                    "id": group.key().id()
                 }
-                groups = []
-                for group in Group.all():
-                    groupjson = {
-                        "nickname": group.nickname,
-                        "id": group.key().id()
-                    }
-                    if group.key().id() in beacon.groupids:
-                        groupjson.update({"valid": True})
-                    else:
-                        groupjson.update({"valid": False})
-                    groups.append(groupjson)
-                beaconjson.update({"groups": groups})
+                if group.key().id() in beacon.groupids:
+                    groupjson.update({"valid": True})
+                else:
+                    groupjson.update({"valid": False})
+                groups.append(groupjson)
+            beaconjson.update({"groups": groups})
         else:
             beaconjson = {
                 "valid": True,
@@ -54,27 +55,28 @@ class SingleBeacon(webapp2.RequestHandler):
 class SingleGroup(webapp2.RequestHandler):
 
     def get(self, key):
+        group = None
         if key != 'add':
             group = Group.get_by_id(int(key))
-            if group:
-                groupjson = {
-                    "id": key,
-                    "nickname": group.nickname,
-                    "valid": True,
-                    "notnew": True
+        if group:
+            groupjson = {
+                "id": key,
+                "nickname": group.nickname,
+                "valid": True,
+                "notnew": True
+            }
+            triggers = []
+            for trigger in Trigger.all():
+                triggerjson = {
+                    "nickname": trigger.nickname,
+                    "id": trigger.key().id(),
                 }
-                triggers = []
-                for trigger in Trigger.all():
-                    triggerjson = {
-                        "nickname": trigger.nickname,
-                        "id": trigger.key().id(),
-                    }
-                    if trigger.key().id() in group.triggerids:
-                        triggerjson.update({"valid": True})
-                    else:
-                        triggerjson.update({"valid": False})
-                    triggers.append(triggerjson)
-                groupjson.update({"triggers": triggers})
+                if trigger.key().id() in group.triggerids:
+                    triggerjson.update({"valid": True})
+                else:
+                    triggerjson.update({"valid": False})
+                triggers.append(triggerjson)
+            groupjson.update({"triggers": triggers})
         else:
             groupjson = {
                 "nickname": None,
@@ -88,29 +90,30 @@ class SingleGroup(webapp2.RequestHandler):
 
 class SingleTrigger(webapp2.RequestHandler):
     def get(self, key):
+        trigger = None
         if key != 'add':
             trigger = Trigger.get_by_id(int(key))
-            if trigger:
-                triggerjson = {
-                    "id": key,
-                    "nickname": trigger.nickname,
-                    "linktype": trigger.linktype,
-                    "triggerlink": trigger.triggerlink,
-                    "valid": True,
-                    "notnew": True,
+        if trigger:
+            triggerjson = {
+                "id": key,
+                "nickname": trigger.nickname,
+                "linktype": trigger.linktype,
+                "triggerlink": trigger.triggerlink,
+                "valid": True,
+                "notnew": True,
+            }
+            groups = []
+            for group in Group.all():
+                groupjson = {
+                    "nickname": group.nickname,
+                    "id": group.key().id()
                 }
-                groups = []
-                for group in Group.all():
-                    groupjson = {
-                        "nickname": group.nickname,
-                        "id": group.key().id()
-                    }
-                    if key in group.triggerids:
-                        groupjson.update({"valid": True})
-                    else:
-                        groupjson.update({"valid": False})
-                    groups.append(groupjson)
-                triggerjson.update({"groups": groups})
+                if key in group.triggerids:
+                    groupjson.update({"valid": True})
+                else:
+                    groupjson.update({"valid": False})
+                groups.append(groupjson)
+            triggerjson.update({"groups": groups})
         else:
             triggerjson = {
                 "nickname": None,
