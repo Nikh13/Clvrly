@@ -1,16 +1,16 @@
-from google.apipengine.ext import ndb
+from google.appengine.ext import ndb
 
 
 class Beacon(ndb.Model):
     nickname = ndb.StringProperty()
     beaconuuid = ndb.StringProperty()
-    groupids = ndb.ListProperty(int)
+    groupids = ndb.IntegerProperty(repeated=True)
     description = ndb.TextProperty()
 
 
 class Group(ndb.Model):
     nickname = ndb.StringProperty()
-    triggerids = ndb.ListProperty(int)
+    triggerids = ndb.IntegerProperty(repeated=True)
     description = ndb.TextProperty()
 
 
