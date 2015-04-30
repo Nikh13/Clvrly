@@ -3,9 +3,9 @@
     <div class="container">
     {% for event in events %}
         <div class="event_container">
-            <span> event.name </span>
-            <span> event.time </span>
-            <span> event.building </span>
+            <span> {{ event.name }} </span> <br/>
+            <span> {{ event.time }} </span> <br/>
+            <span> {{ event.building }} </span> <br/>
         </div>
     {% endfor %}
     </div>

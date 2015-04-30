@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from google.appengine.ext.webapp import template
 
 from beacon.models import Beacon, Group, Trigger
-from event.models import Event
+from event.models import Event, Building, get_building_obj
 from utils import JINJA_ENVIRONMENT
 
 import webapp2
@@ -44,11 +44,11 @@ class AddEvent(webapp2.RequestHandler):
         building = self.request.POST.get('building')
         kwargs = {
             'name': name,
-            'time': time,
-            'building': building
+            'time': datetime.strptime(time, "%d/%m/%Y"),
+            'building' : get_building_obj(building),
         }
         event = Event(**kwargs)
-        event.save()
+        event.put()
         self.redirect("/events/all")
 
     def get(self):

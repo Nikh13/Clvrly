@@ -9,7 +9,7 @@
     </div>
     <div class="row">
         <div class="col-md-8">
-            <form class="form-horizontal" action="/beacons/add" method="POST">
+            <form class="form-horizontal" action="/addevent" method="POST">
                 <fieldset>
 
                 
@@ -25,7 +25,7 @@
                 
                 <!-- Text input-->
                 <div class="form-group">
-                  <label class="col-md-4 control-label" for="event-time">Beacon UUID</label>  
+                  <label class="col-md-4 control-label" for="event-time">Event Timing</label>  
                   <div class="col-md-8">
                   <input id="event-time" name="datetime" type="text"  class="form-control input-md" required="">
                   <span class="help-block">Timing of the event.</span>  
@@ -34,7 +34,7 @@
                 
                 <!-- Multiple Options -->
                 <div class="form-group">
-                  <label class="col-md-4 control-label" for="checkboxes">Select Groups</label>
+                  <label class="col-md-4 control-label" for="checkboxes">Select Venue</label>
                   <div class="col-md-8">
                     <select name="building">
                         <option>TT</option>

@@ -3,17 +3,25 @@ from google.appengine.ext.ndb import msgprop
 from protorpc import messages
 
 
-class Buildings(messages.Enum):
+
+class Building(messages.Enum):
     TT = 1
     SJT = 2
+
+
+def get_building_obj(building_str):
+    if building_str == 'TT':
+        return Building.TT
+    elif building_str == 'SJT':
+        return Building.SJT
 
 
 class Event(ndb.Model):
     namespace = ndb.StringProperty()
     name = ndb.StringProperty()
     time = ndb.DateTimeProperty()
-    building = msgprop.EnumProperty(Buildings, required=True)
+    building = msgprop.EnumProperty(Building, required=True)
 
-    def save(self, *args, **kwargs):
+    def put(self, *args, **kwargs):
         self.namespace = "Event"
-        super(Event, self).save()
+        super(Event, self).put()
