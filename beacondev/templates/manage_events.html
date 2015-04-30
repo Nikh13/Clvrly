@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block page %}
+    <div class="container">
+    {% for event in events %}
+        <div class="event_container">
+            <span> event.name </span>
+            <span> event.time </span>
+            <span> event.building </span>
+        </div>
+    {% endfor %}
+    </div>
+{% endblock %}

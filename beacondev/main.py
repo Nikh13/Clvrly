@@ -8,6 +8,7 @@ import os
 from os.path import dirname, join
 
 from beacon.urls import urlconfs as beacon_urls
+from event.urls import urlconfs as event_urls
 
 from utils import JINJA_ENVIRONMENT
 
@@ -26,5 +27,6 @@ url_confs = [
 ]
 
 url_confs.extend(beacon_urls)
+url_confs.extend(event_urls)
 
 app = webapp2.WSGIApplication(url_confs, debug=True)

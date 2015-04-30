@@ -1,11 +1,11 @@
-from google.apipengine.ext import ndb
+from google.appengine.ext import ndb
 from google.appengine.ext.ndb import msgprop
 from protorpc import messages
 
 
 class Buildings(messages.Enum):
-    TT = 'Technology Tower'
-    SJT = 'Silver Jubilee Tower'
+    TT = 1
+    SJT = 2
 
 
 class Event(ndb.Model):

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block page %}
+<div class='container'>
+    <div class="row" style="padding:10px;">
+        <div class="alert alert-info">
+            <h4><strong>Events Form</strong></h4>
+            <p>Add events here</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <form class="form-horizontal" action="/beacons/add" method="POST">
+                <fieldset>
+
+                
+                <!-- Text input-->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="name">Event Name</label>  
+                  <div class="col-md-8">
+                  
+                  <input id="event-name" name="name" type="text" placeholder="Add Event Name"  class="form-control input-md" required="">
+                  <span class="help-block"> This shows up on the mobile app. </span>  
+                  </div>
+                </div>
+                
+                <!-- Text input-->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="event-time">Beacon UUID</label>  
+                  <div class="col-md-8">
+                  <input id="event-time" name="datetime" type="text"  class="form-control input-md" required="">
+                  <span class="help-block">Timing of the event.</span>  
+                  </div>
+                </div>
+                
+                <!-- Multiple Options -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="checkboxes">Select Groups</label>
+                  <div class="col-md-8">
+                    <select name="building">
+                        <option>TT</option>
+                        <option>SJT</option>
+                    </select>
+                    <span class="help-block">Select one or more groups</span>
+                    </div>
+                </div>
+                
+                <!-- Button -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="submit">and lastly</label>
+                  <div class="col-md-5">
+                    <button id="submit" name="submit" class="btn btn-success">Save Event</button>
+                  </div>
+                </div>
+                
+                </fieldset>
+            </form>
+    </div>
+{% endblock %}
