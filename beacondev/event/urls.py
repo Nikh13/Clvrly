@@ -1,7 +1,8 @@
 from event.views import *
 
 urlconfs = [
-    ('/events/all', FetchEvents),
+    ('/api/events', FetchEvents),
+    ('/events', ListEvents),
     ('/event/(.+)/beacons', FetchBeaconsForEvent),
     ('/events/(.+)', SingleEvent),
     ('/addevent', AddEvent),

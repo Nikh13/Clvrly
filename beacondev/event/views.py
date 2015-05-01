@@ -12,7 +12,7 @@ from utils import AJAX_OK, AJAX_ERROR
 import webapp2
 
 
-# /events/all
+# /api/events/
 class FetchEvents(webapp2.RequestHandler):
     def post(self):
         latitude = self.request.POST.get('latitiude')
@@ -24,7 +24,24 @@ class FetchEvents(webapp2.RequestHandler):
         return self.response.out.write(response_dict)
 
     def get(self):
-        events = Event.query()
+        events = Event.query().fetch()
+        ctx = {}
+        events = map(lambda d: d.to_dict(), events)
+        for event in events:
+            event_time = event.pop('time').strftime("%d/%m/%Y %H:%M:%S")
+            event_building = get_building_str(event.pop('building'))
+            event['time'] = event_time
+            event['building'] = get_building_str(event_building)
+
+        ctx = {'events': events}
+        self.response.headers['Content-Type'] = 'application/json'
+        return self.response.out.write(json.dumps(ctx))
+
+
+# /events
+class ListEvents(webapp2.RequestHandler):
+    def get(self):
+        events = Event.query().fetch
         events = list(events)
         template = JINJA_ENVIRONMENT.get_template('manage_events.html')
         ctx = {'events': events}
@@ -71,15 +88,16 @@ class FetchBeaconsForEvent(webapp2.RequestHandler):
                     beacons_in_group.append(beacon.to_dict())
                     groups_dict[groupid_dict[id]] = beacons_in_group
         event = event.to_dict()
-        event.pop('building')
+        building = event.pop('building')
+        event_building = get_building_str(building)
         event_time = event.pop('time')
         event_time = event_time.strftime("%d/%m/%Y %H:%M:%S")
+        event['time'] = event_time,
+        event['building'] = event_building
         ctx.update({
             'status': AJAX_OK,
             'groups_of_beacons': groups_dict,
             'event': event,
-            'event_building': get_building_str(event_building),
-            'event_time': event_time,
         })
         json_response = json.dumps(ctx)
         self.response.headers['Content-Type'] = 'application/json'
@@ -103,13 +121,13 @@ class AddEvent(webapp2.RequestHandler):
         if not event:
             event = Event(**kwargs)
             event.put()
-            self.redirect("/events/all")
+            self.redirect("/events")
         else:
             event.name = name
             event.time = datetime.strptime(time, "%d/%m/%Y %H:%M:%S")
             event.building = get_building_obj(building)
             event.put()
-            self.redirect('/events/all')
+            self.redirect('/events')
 
     def get(self):
         template = JINJA_ENVIRONMENT.get_template('add_event.html')

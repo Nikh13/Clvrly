@@ -9,6 +9,7 @@ class Building(messages.Enum):
     TT = 1
     SJT = 2
 
+
 def get_building_str(building):
     if building == Building.TT:
         return "TT"
