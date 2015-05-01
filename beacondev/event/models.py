@@ -9,7 +9,6 @@ class Building(messages.Enum):
     TT = 1
     SJT = 2
 
-
 def get_building_str(building):
     if building == Building.TT:
         return "TT"
@@ -26,9 +25,9 @@ def get_building_obj(building_str):
 
 class Event(ndb.Model):
     namespace = ndb.StringProperty()
-    name = ndb.StringProperty()
+    name = ndb.StringProperty(indexed=True)
     time = ndb.DateTimeProperty()
-    building = msgprop.EnumProperty(Building, required=True)
+    building = msgprop.EnumProperty(Building, required=True, indexed=True)
 
     def put(self, *args, **kwargs):
         self.namespace = "Event"

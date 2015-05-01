@@ -1,4 +1,3 @@
-import os
 import jinja2
 
 from os.path import dirname, join
@@ -8,3 +7,6 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     extensions=['jinja2.ext.autoescape'],
     autoescape=True
 )
+
+AJAX_OK = 'OK'
+AJAX_ERROR = 'ERROR'

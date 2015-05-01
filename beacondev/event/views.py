@@ -7,6 +7,7 @@ from beacon.models import Beacon, Group, Trigger
 from event.models import Event, Building, get_building_obj
 from event.models import get_building_str
 from utils import JINJA_ENVIRONMENT
+from utils import AJAX_OK, AJAX_ERROR
 
 import webapp2
 
@@ -33,7 +34,56 @@ class FetchEvents(webapp2.RequestHandler):
 # /events/{event}/beacons
 class FetchBeaconsForEvent(webapp2.RequestHandler):
     def get(self, event_slug):
-        pass
+        print event_slug
+        event = Event.query(Event.name == event_slug).fetch()
+        event = event[0]
+        ctx = {}
+        if not event:
+            ctx.update({
+                'status': AJAX_ERROR,
+            })
+            response_dict = json.dumps(ctx)
+            self.response.write(response_dict)
+            return
+        print event
+        event_building = event.building
+
+        # get all groups of beacons in the building.
+        groups = Group.query(Group.building == event_building).fetch()
+
+        # Map all the beacons according to the groups they belong
+        groupids = map(lambda d: (d.key.id(), d.nickname), groups)
+        groupid_dict = dict((x, y) for x, y in groupids)
+        beacons = Beacon.query(Beacon.groupids.IN(groupid_dict.keys())).fetch()
+
+        groups_dict = {}
+        # Beacons store ids, hence such a complex proces.
+        # Key Property would have solved the issue but nevertheless fuck it.
+        for beacon in beacons:
+            groups_of_beacon = beacon.groupids
+            for id in groups_of_beacon:
+                if not groups_dict.get(groupid_dict[id]):
+                    groups_dict.update({
+                        groupid_dict[id]: [beacon.to_dict()]
+                    })
+                else:
+                    beacons_in_group = groups_dict[groupid_dict[id]]
+                    beacons_in_group.append(beacon.to_dict())
+                    groups_dict[groupid_dict[id]] = beacons_in_group
+        event = event.to_dict()
+        event.pop('building')
+        event_time = event.pop('time')
+        event_time = event_time.strftime("%d/%m/%Y %H:%M:%S")
+        ctx.update({
+            'status': AJAX_OK,
+            'groups_of_beacons': groups_dict,
+            'event': event,
+            'event_building': get_building_str(event_building),
+            'event_time': event_time,
+        })
+        json_response = json.dumps(ctx)
+        self.response.headers['Content-Type'] = 'application/json'
+        return self.response.out.write(json_response)
 
 
 class AddEvent(webapp2.RequestHandler):
@@ -57,7 +107,7 @@ class AddEvent(webapp2.RequestHandler):
         else:
             event.name = name
             event.time = datetime.strptime(time, "%d/%m/%Y %H:%M:%S")
-            event.building =  get_building_obj(building)
+            event.building = get_building_obj(building)
             event.put()
             self.redirect('/events/all')
 

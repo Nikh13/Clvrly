@@ -6,19 +6,19 @@ from protorpc import messages
 from event.models import Building
 
 class Beacon(ndb.Model):
-    nickname = ndb.StringProperty()
-    beaconuuid = ndb.StringProperty()
+    nickname = ndb.StringProperty(indexed=True)
+    beaconuuid = ndb.StringProperty(indexed=True)
     groupids = ndb.IntegerProperty(repeated=True)
     description = ndb.TextProperty()
 
 
 class Group(ndb.Model):
-    nickname = ndb.StringProperty()
+    nickname = ndb.StringProperty(indexed=True)
     triggerids = ndb.IntegerProperty(repeated=True)
     description = ndb.TextProperty()
     beaconids = ndb.IntegerProperty(repeated=True)
     building = msgprop.EnumProperty(Building,
-                                required=True)
+                                required=True, indexed=True)
 
 
 class Trigger(ndb.Model):
