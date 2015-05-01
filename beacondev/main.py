@@ -17,7 +17,7 @@ import webapp2
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
-        template = JINJA_ENVIRONMENT.get_template('base.html')
+        template = JINJA_ENVIRONMENT.get_template('home.html')
         ctx = {}
         self.response.write(template.render(ctx))
 
