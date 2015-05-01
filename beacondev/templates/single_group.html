@@ -13,8 +13,9 @@
                 <div class="col-md-8">
                     <form class="form-horizontal" action="/addgroup" method="POST">
                         <fieldset>
-    
-                        
+
+                            <input type="hidden" name="groupid" style="display: none" value="{{ group.id }}"/>
+
                         <!-- Text input-->
                         <div class="form-group">
                           <label class="col-md-4 control-label" for="nickname">Nickname</label>  
@@ -25,26 +26,38 @@
                           </div>
                         </div>
                         
+                        <!-- Building Input -->
+                        <div class="form-group">
+                          <label class="col-md-4 control-label" for="building">Building Name</label>  
+                          <div class="col-md-8"> 
+                            <select name="building">
+                                <option {% if group.TT %} selected {% endif %}>TT</option>
+                                <option {% if group.SJT %} selected {% endif %}>SJT</option>
+                            </select>
+                            <span class="help-block">Select a building.</span>
+                          </div>
+                        </div>
+
                         <!-- Multiple Checkboxes -->
                         <div class="form-group">
                           <label class="col-md-4 control-label" for="checkboxes">Select Triggers</label>
                           <div class="col-md-8">
-                          {% for trigger in group.triggers %}
-                          <div class="checkbox">
-                            <label for="groupid">
-                              <input type="checkbox" name="groupid" id="groupid" value="{{trigger.id}}" 
-                              {% if group.valid %}checked{%endif%}>{{trigger.nickname}}</label>
-                            </div>
-                        {% endfor %}
-                        <span class="help-block">Select one or more groups</span>
-                        </div>
+                            {% for trigger in group.triggers %}
+                            <div class="checkbox">
+                                <label for="groupid">
+                                <input type="checkbox" name="groupid" id="groupid" value="{{trigger.id}}" 
+                                {% if group.valid %}checked{%endif%}>{{trigger.nickname}}</label>
+                                </div>
+                            {% endfor %}
+                            <span class="help-block">Select one or more groups</span>
+                          </div>
                         </div>
                         
                         <!-- Button -->
                         <div class="form-group">
                           <label class="col-md-4 control-label" for="submit">and lastly</label>
                           <div class="col-md-5">
-                            <button id="submit" name="submit" class="btn btn-success">Save Beacon</button>
+                            <button id="submit" name="submit" class="btn btn-success">Save Group</button>
                           </div>
                         </div>
                         
@@ -72,6 +85,18 @@
                           
                           <input id="nickname" name="nickname" type="text" placeholder="" class="form-control input-md" required="">
                           <span class="help-block">Nicknames are only used for your convenience. </span>  
+                          </div>
+                        </div>
+
+                        <!-- Building Input -->
+                        <div class="form-group">
+                          <label class="col-md-4 control-label" for="building">Building Name</label>  
+                          <div class="col-md-8"> 
+                            <select name="building">
+                                <option>TT</option>
+                                <option>SJT</option>
+                            </select>
+                            <span class="help-block">Select a building.</span>
                           </div>
                         </div>
                         

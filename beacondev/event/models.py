@@ -3,10 +3,16 @@ from google.appengine.ext.ndb import msgprop
 from protorpc import messages
 
 
-
 class Building(messages.Enum):
     TT = 1
     SJT = 2
+
+
+def get_building_str(building):
+    if building == Building.TT:
+        return "TT"
+    elif building == Building.SJT:
+        return "SJT"
 
 
 def get_building_obj(building_str):

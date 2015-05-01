@@ -6,6 +6,7 @@ from google.appengine.ext.webapp import template
 
 from beacon.models import Beacon, Group, Trigger
 
+
 import webapp2
 
 from utils import JINJA_ENVIRONMENT
@@ -60,8 +61,10 @@ class SingleBeacon(webapp2.RequestHandler):
 class SingleGroup(webapp2.RequestHandler):
 
     def get(self, key):
+        # Preempt cycles
+        from event.models import get_building_str
         group = None
-        if key and key != 'add':
+        if key:
             group = Group.get_by_id(int(key))
         if group:
             groupjson = {
@@ -70,6 +73,8 @@ class SingleGroup(webapp2.RequestHandler):
                 "valid": True,
                 "notnew": True
             }
+            building_str = get_building_str(group.building)
+            groupjson.update({building_str: True})
             triggers = []
             for trigger in Trigger.query():
                 triggerjson = {
@@ -82,17 +87,13 @@ class SingleGroup(webapp2.RequestHandler):
                     triggerjson.update({"valid": False})
                 triggers.append(triggerjson)
             groupjson.update({"triggers": triggers})
+            final = {"group": groupjson}
+            template = JINJA_ENVIRONMENT.get_template('single_group.html')
+            self.response.write(template.render(final))
         else:
-            groupjson = {
-                "nickname": None,
-                "triggers": None,
-                "notnew": False,
-                "valid": True,
-            }
-        final = {"group": groupjson}
-
-        template = JINJA_ENVIRONMENT.get_template('single_group.html')
-        self.response.write(template.render(final))
+            final = {}
+            template = JINJA_ENVIRONMENT.get_template('404.html')
+            self.response.write(template.render(final))
 
 
 class SingleTrigger(webapp2.RequestHandler):
@@ -238,31 +239,52 @@ class ListGroups(webapp2.RequestHandler):
 
 class AddGroup(webapp2.RequestHandler):
     def post(self):
-        groupid = self.request.get("groupid")
-        nickname = self.request.get("nickname")
+        from event.models import get_building_obj
+
+        groupid = self.request.POST.get("groupid")
+        nickname = self.request.POST.get("nickname")
         ts = self.request.get_all("triggerid")
+        building_str = self.request.POST.get("building")
+        building = get_building_obj(building_str)
+
         triggerids = []
         for t in ts:
             triggerids.append(int(t))
         description = self.request.get("description")
-        try:
+
+        group = None
+        if groupid:
             keyid = int(groupid)
             group = Group.get_by_id(keyid)
-        except Exception:
-            group = None
-        if group is None:
-            group = Group(
-                nickname=nickname,
-                description=description,
-                triggerids=triggerids
-            )
-            group.put()
-        else:
+
+        if group:
             group.nickname = nickname
             group.triggerids = triggerids
             group.description = description
+            group.building = building
+            group.put()
+        else:
+            group = Group(
+                nickname=nickname,
+                description=description,
+                triggerids=triggerids,
+                building=building,
+            )
             group.put()
         self.redirect("/groups")
+
+    def get(self):
+        groupjson = {
+            "nickname": None,
+            'building': None,
+            "triggers": None,
+            "notnew": False,
+            "valid": True,
+        }
+        final = {"group": groupjson}
+
+        template = JINJA_ENVIRONMENT.get_template('single_group.html')
+        self.response.write(template.render(final))
 
 
 class ListTriggers(webapp2.RequestHandler):
@@ -352,6 +374,7 @@ class TestTemplate(webapp2.RequestHandler):
                 'name': 'Entrance'
             }
         ]
+        """
         triggers = [
             {
                 'id': '1213',
@@ -374,6 +397,7 @@ class TestTemplate(webapp2.RequestHandler):
                 'grouptriggers': groups
             }
         ]
+        """
         # values.update({
         #   'beacons':beacons
         #   })

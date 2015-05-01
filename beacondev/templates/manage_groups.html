@@ -4,7 +4,7 @@
     <div class="row" style="padding:10px;">
         <div class="alert alert-info">
             <h4><strong>Groups</strong></h4>
-            <span><p>Set up and manage your Groups from this panel.</p><a class="btn btn-default" href="./groups/add">Add a Group</a></span>
+            <span><p>Set up and manage your Groups from this panel.</p><a class="btn btn-default" href="/addgroup">Add a Group</a></span>
         </div>
     </div>
     {% if groups %}
@@ -15,7 +15,7 @@
             <div class="thumbnail" style="padding:10px;"><!-- Single group -->
                 <div class="row">
                 <div class="col-md-12">
-                    <h4><strong><a href="#">{{ group.nickname }}</a></strong></h4>
+                    <h4><strong><a href="/groups/{{ group.groupid }}">{{ group.nickname }}</a></strong></h4>
                 </div>
             </div>
                 <div class="row">
@@ -50,7 +50,7 @@
                     </p>
                 </div>
                 <div class="col-md-3"
-                    <p><a class="btn btn-primary pull-right" href="./groups/{{group.groupid}}">More Info</a></p>
+                    <p><a class="btn btn-primary pull-right" href="./groups/{{ group.groupid }}">More Info</a></p>
                     </div>
             </div>
             </div><!-- End Single group -->
