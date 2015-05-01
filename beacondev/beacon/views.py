@@ -46,16 +46,13 @@ class SingleBeacon(webapp2.RequestHandler):
                     groupjson.update({"valid": False})
                 groups.append(groupjson)
             beaconjson.update({"groups": groups})
+            final = {"beacon": beaconjson}
+            template = JINJA_ENVIRONMENT.get_template('single_beacon.html')
+            self.response.write(template.render(final))
         else:
-            beaconjson = {
-                "valid": True,
-                "nickname": None,
-                "groups": None,
-                "notnew": False,
-            }
-        final = {"beacon": beaconjson}
-        template = JINJA_ENVIRONMENT.get_template('single_beacon.html')
-        self.response.write(template.render(final))
+            final = {}
+            template = JINJA_ENVIRONMENT.get_template('404.html')
+            self.response.write(template.render(final))
 
 
 class SingleGroup(webapp2.RequestHandler):
@@ -140,7 +137,7 @@ class ListBeacons(webapp2.RequestHandler):
         beacondetails = []
         triggers = []
         for beacon in beacons:
-            valuepair = {}
+            valuepair = {'beaconid': beacon.key.id()}
             valuepair.update({'nickname': beacon.nickname})
             valuepair.update({'beaconuuid': beacon.beaconuuid})
             gs = beacon.groupids
@@ -197,6 +194,17 @@ class AddBeacon(webapp2.RequestHandler):
             beacon.description = description
             beacon.put()
         self.redirect("/beacons")
+
+    def get(self):
+        beaconjson = {
+            "valid": True,
+            "nickname": None,
+            "groups": None,
+            "notnew": False,
+        }
+        final = {"beacon": beaconjson}
+        template = JINJA_ENVIRONMENT.get_template('single_beacon.html')
+        self.response.write(template.render(final))
 
 
 class ListGroups(webapp2.RequestHandler):

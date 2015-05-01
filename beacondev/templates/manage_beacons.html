@@ -4,7 +4,7 @@
     <div class="row" style="padding:10px;">
         <div class="alert alert-info">
             <h4><strong>Beacons</strong></h4>
-            <span><p>Set up and manage your beacons from this panel.</p><a class="btn btn-default" href="./beacons/add">Add a Beacon</a></span>
+            <span><p>Set up and manage your beacons from this panel.</p><a class="btn btn-default" href="/addbeacon">Add a Beacon</a></span>
         </div>
     </div>
     {% if beacons %}
@@ -15,7 +15,7 @@
             <div class="thumbnail" style="padding:10px;"><!-- Single Beacon -->
                 <div class="row">
                 <div class="col-md-12">
-                    <h4><strong><a href="#">{{ beacon.nickname }}</a></strong></h4>
+                    <h4><strong><a href="/beacons/{{beacon.beaconid}}">{{ beacon.nickname }}</a></strong></h4>
                 </div>
             </div>
                 <div class="row">
