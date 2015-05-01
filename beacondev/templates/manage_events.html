@@ -1,12 +1,54 @@
 {% extends 'base.html' %}
 {% block page %}
     <div class="container">
-    {% for event in events %}
-        <div class="event_container">
-            <span> {{ event.name }} </span> <br/>
-            <span> {{ event.time }} </span> <br/>
-            <span> {{ event.building }} </span> <br/>
+        <div class="row" style="padding:10px;">
+            <div class="alert alert-info">
+                <h4><strong>Events</strong></h4>
+                <span>
+                    <p>Set up and manage your events from this panel.</p>
+                    <a class="btn btn-default" href="/addevent">Add an Event</a>
+                </span>
+            </div>
         </div>
-    {% endfor %}
+
+        <div> <!-- List of Events -->
+            <div class ="row">
+                <div class="col-md-10" style="padding:10px;">
+                {% for event in events %}
+                    <div class="thumbnail" style="padding:10px;"><!-- Single Beacon -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4><strong><a href="/events/{{ event.key.id() }}">{{ event.name }}</a></strong></h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="col-md-12">
+                                    <p><strong>Event Timing</strong></p>
+                                </div>
+                            </div>
+                            <div class="col-md-8">      
+                                <p>
+                                    {{ event.time }}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="col-md-12">
+                                    <p><strong>Event Building</strong></p>
+                                </div>
+                            </div>
+                            <div class="col-md-8">      
+                                <p>
+                                    {{ event.building }}
+                                </p>
+                            </div>
+                        </div>
+                    </div> <!-- End Single Beacon -->
+                {% endfor %}
+                </div>
+            </div> <!-- End List Of Beacons -->
+        </div>
     </div>
 {% endblock %}

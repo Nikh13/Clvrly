@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from google.appengine.ext import ndb
 from google.appengine.ext.ndb import msgprop
 from protorpc import messages
@@ -31,3 +33,8 @@ class Event(ndb.Model):
     def put(self, *args, **kwargs):
         self.namespace = "Event"
         super(Event, self).put()
+
+    def _get_time(self):
+        return self.time.strftime("%d/%m/%Y %H:%M:%S")
+
+    get_time = property(_get_time)

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block page %}
+<div class="container">
+  {% if event %}
+  <div class="row" style="padding:10px;">
+      <div class="alert alert-info">
+          <h4><strong>Event Properties</strong></h4>
+          <p>Add/edit your event  properties here</p>
+      </div>
+      <div>
+  </div>
+  <div class="row">
+      <div class="col-md-8">
+          <form class="form-horizontal" action="/addevent" method="POST">
+              <fieldset>
+
+                  <input type="hidden" name="eventid" style="display: none" value="{{ event.key.id() }}"/>
+
+              <!-- Text input-->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="name">Event Name</label>
+                <div class="col-md-8">
+
+                <input id="name" name="name" type="text" placeholder="Blue Beacon" value="{{ event.name }}" class="form-control input-md" required="">
+                <span class="help-block">Please fill the name of your event.</span>
+                </div>
+              </div>
+
+
+              <!-- Datetime Input -->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="datetime">Select Time</label>
+                <div class="col-md-8">
+                  <input type="datetime" name="datetime" value="{{ event.get_time }}"></input>
+                  <span class="help-block">Select the time of your venue.</span>
+                </div>
+              </div>
+
+              <!-- Building Input -->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="building">Building Name</label>
+                <div class="col-md-8">
+                  <select name="building">
+                      <option {% if TT %} selected {% endif %}>TT</option>
+                      <option {% if SJT %} selected {% endif %}>SJT</option>
+                  </select>
+                  <span class="help-block">Select a building.</span>
+                </div>
+              </div>
+
+
+              <!-- Submit Button -->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="submit">and lastly</label>
+                <div class="col-md-5">
+                  <button id="submit" name="submit" class="btn btn-success">Save Event</button>
+                </div>
+              </div>
+
+              </fieldset>
+          </form>
+          </div>
+      </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -14,25 +14,25 @@
             {% for group in groups %}
             <div class="thumbnail" style="padding:10px;"><!-- Single group -->
                 <div class="row">
-                <div class="col-md-12">
-                    <h4><strong><a href="/groups/{{ group.groupid }}">{{ group.nickname }}</a></strong></h4>
+                    <div class="col-md-12">
+                        <h4><strong><a href="/groups/{{ group.groupid }}">{{ group.nickname }}</a></strong></h4>
+                    </div>
                 </div>
-            </div>
                 <div class="row">
-                <div class="col-md-8">      
-                    <p>
-                        {{ group.description }}
-                    </p>
-                </div>
-                <div class="col-md-4">
-                    <div class="row col-md-12">
-                        <p>Group Activity</p>
+                    <div class="col-md-8">      
+                        <p>
+                            {{ group.description }}
+                        </p>
                     </div>
-                    <div class="row col-md-12 thumbnail" style="padding:10px;">
-                        <h5><strong><--group statistics go here--></strong></h5>
+                    <div class="col-md-4">
+                        <div class="row col-md-12">
+                            <p>Group Activity</p>
+                        </div>
+                        <div class="row col-md-12 thumbnail" style="padding:10px;">
+                            <h5><strong><--group statistics go here--></strong></h5>
+                        </div>
                     </div>
                 </div>
-            </div>
             <hr>
             <div class="row">
                 <div class="col-md-9">
