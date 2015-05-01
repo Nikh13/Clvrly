@@ -31,7 +31,7 @@ class FetchEvents(webapp2.RequestHandler):
             event_time = event.pop('time').strftime("%d/%m/%Y %H:%M:%S")
             event_building = get_building_str(event.pop('building'))
             event['time'] = event_time
-            event['building'] = get_building_str(event_building)
+            event['building'] = event_building
 
         ctx = {'events': events}
         self.response.headers['Content-Type'] = 'application/json'
@@ -41,8 +41,7 @@ class FetchEvents(webapp2.RequestHandler):
 # /events
 class ListEvents(webapp2.RequestHandler):
     def get(self):
-        events = Event.query().fetch
-        events = list(events)
+        events = Event.query().fetch()
         template = JINJA_ENVIRONMENT.get_template('manage_events.html')
         ctx = {'events': events}
         self.response.write(template.render(ctx))
@@ -51,7 +50,6 @@ class ListEvents(webapp2.RequestHandler):
 # /events/{event}/beacons
 class FetchBeaconsForEvent(webapp2.RequestHandler):
     def get(self, event_slug):
-        print event_slug
         event = Event.query(Event.name == event_slug).fetch()
         event = event[0]
         ctx = {}
@@ -62,7 +60,7 @@ class FetchBeaconsForEvent(webapp2.RequestHandler):
             response_dict = json.dumps(ctx)
             self.response.write(response_dict)
             return
-        print event
+
         event_building = event.building
 
         # get all groups of beacons in the building.
@@ -71,8 +69,8 @@ class FetchBeaconsForEvent(webapp2.RequestHandler):
         # Map all the beacons according to the groups they belong
         groupids = map(lambda d: (d.key.id(), d.nickname), groups)
         groupid_dict = dict((x, y) for x, y in groupids)
-        beacons = Beacon.query(Beacon.groupids.IN(groupid_dict.keys())).fetch()
 
+        beacons = Beacon.query(Beacon.groupids.IN(groupid_dict.keys())).fetch()
         groups_dict = {}
         # Beacons store ids, hence such a complex proces.
         # Key Property would have solved the issue but nevertheless fuck it.
