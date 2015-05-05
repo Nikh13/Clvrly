@@ -11,5 +11,6 @@ urlconfs = [
     ('/groups', ListGroups),
     ('/triggers', ListTriggers),
     ('/test', TestTemplate),
-    ('/api/all', DumpData)
+    ('/api/all', DumpData),
+    ('/api/sample', SampleData)
 ]

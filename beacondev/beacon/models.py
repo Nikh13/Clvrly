@@ -11,6 +11,13 @@ class DistanceBucket(messages.Enum):
     NEXT_TO = 2
 
 
+distance_choices = {
+    'NEXT_TO': 2,
+    'NEAR': 0,
+    'FAR': 1
+}
+
+
 class Beacon(ndb.Model):
     nickname = ndb.StringProperty(indexed=True)
     beaconuuid = ndb.StringProperty(indexed=True)
@@ -23,7 +30,6 @@ class Group(ndb.Model):
     triggerids = ndb.IntegerProperty(repeated=True)
     description = ndb.TextProperty()
     beaconids = ndb.IntegerProperty(repeated=True)
-    distances = ndb.IntegerProperty(repeated=True)
     building = msgprop.EnumProperty(Building,
                                     required=True,
                                     indexed=True)

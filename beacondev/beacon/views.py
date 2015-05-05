@@ -1,10 +1,12 @@
 import os
+import json
 
 from os.path import dirname
 
 from google.appengine.ext.webapp import template
 
 from beacon.models import Beacon, Group, Trigger
+import beacon.constants as beacon_constants
 
 
 import webapp2
@@ -448,3 +450,10 @@ class DumpData(webapp2.RequestHandler):
             triggers.append(trigjson)
         data = {"beacons": beacons, "groups": groups, "triggers": triggers}
         self.response.write(data)
+
+
+class SampleData(webapp2.RequestHandler):
+    def get(self):
+        data = beacon_constants.SAMPLE_DATA
+        json_data = json.dumps(data)
+        self.response.write(json_data)
