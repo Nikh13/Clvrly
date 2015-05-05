@@ -9,17 +9,17 @@ SAMPLE_DATA = {
     'beacons':[
             {
                 'uuid':'DE:54:21:58:C3:9C',
-                'nickname':'beacon 1',
+                'nickname':'Dark Blue',
                 'description': 'desc 1'
             },
             {
                 'uuid':'DA:94:8B:51:91:82',
-                'nickname':'beacon 2',
+                'nickname':'Green',
                 'description': 'desc 2'
             },
             {
                 'uuid':'F4:20:ED:E3:8F:FB',
-                'nickname':'beacon 3',
+                'nickname':'Light Blue',
                 'description': 'desc 3'
             }
     ],
