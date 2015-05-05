@@ -31,7 +31,7 @@ SAMPLE_DATA = {
             'payload': 'hello there'
         },
         {
-            'action_id': 1,
+            'action_id': 2,
             'description': 'desc 1',
             'type': 1,
             'payload': 'good bye'
