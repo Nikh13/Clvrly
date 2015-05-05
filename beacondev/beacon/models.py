@@ -5,6 +5,12 @@ from protorpc import messages
 
 from event.models import Building
 
+class DistanceBucket(messages.Enum):
+    NEAR = 0
+    FAR = 1
+    NEXT_TO = 2
+
+
 class Beacon(ndb.Model):
     nickname = ndb.StringProperty(indexed=True)
     beaconuuid = ndb.StringProperty(indexed=True)
@@ -17,8 +23,10 @@ class Group(ndb.Model):
     triggerids = ndb.IntegerProperty(repeated=True)
     description = ndb.TextProperty()
     beaconids = ndb.IntegerProperty(repeated=True)
+    distances = ndb.IntegerProperty(repeated=True)
     building = msgprop.EnumProperty(Building,
-                                required=True, indexed=True)
+                                    required=True,
+                                    indexed=True)
 
 
 class Trigger(ndb.Model):

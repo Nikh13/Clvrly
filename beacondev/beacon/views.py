@@ -61,7 +61,7 @@ class SingleGroup(webapp2.RequestHandler):
         # Preempt cycles
         from event.models import get_building_str
         group = None
-        if key:
+        if key and key != 'add':
             group = Group.get_by_id(int(key))
         if group:
             groupjson = {
