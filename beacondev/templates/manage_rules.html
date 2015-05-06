@@ -3,29 +3,31 @@
 <div class="container">
     <div class="row" style="padding:10px;">
         <div class="alert alert-info">
-            <h4><strong>Actions</strong></h4>
-            <span><p>Set up and manage your Actions from this panel.</p><a class="btn btn-default" href="/action/add">Add a Action</a></span>
+            <h4><strong>Rules</strong></h4>
+            <span><p>Set up and manage your Rules from this panel.</p><a class="btn btn-default" href="/rule/add">Add a Rule</a></span>
         </div>
     </div>
-    {% if actions %}
+    {% if rules %}
     <div> <!-- List of actions -->
     <div class="row">
         <div class="col-md-10" style="padding:10px;">
-            {% for action in actions %}
+            {% for rule in rules %}
             <div class="thumbnail" style="padding:10px;"><!-- Single actions -->
                 <div class="row">
                     <div class="col-md-12">
-                        <h4><strong><a href="/action/{{ action.id }}">{{ action.nickname }}</a></strong></h4>
+                        <h4><strong><a href="/action/{{ action.id }}">{{ rule.nickname }}</a></strong></h4>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-8">      
                         <p>
-                            <strong>Description: </strong>{{ action.description }}
+                            <strong>Description: </strong>{{ rule.description }}
                         </p>
+                        {% for sr in rule.rules %}
                         <p>
-                            <strong>Payload: </strong>{{ action.payload }}
+                            <a href="/beacon/{{ sr.uuid }}"></a>
                         </p>
+                        {% endfor %}
                     </div>
                 </div>
             <hr>
@@ -57,7 +59,7 @@
    {% else %}
    <div class="row">
         <div class="col-md-8">
-            <h1>You currently have no actions</h1>
+            <h1>You currently have no rules</h1>
         </div>
    </div>
    {% endif %}
