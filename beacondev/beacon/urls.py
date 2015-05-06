@@ -15,5 +15,6 @@ urlconfs = [
     # ('/triggers', ListTriggers),
     ('/test', TestTemplate),
     ('/api/all', DumpData),
-    ('/api/sample', SampleData)
+    ('/api/sample', SampleData),
+    ('/jsonrule', rulesJSON)
 ]

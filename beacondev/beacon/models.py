@@ -43,6 +43,10 @@ class Rule(ndb.Model):
     description = ndb.TextProperty()
 
 
+class JSONDump(ndb.Model):
+    jsondata = ndb.StringProperty()
+
+
 # class Group(ndb.Model):
 #     nickname = ndb.StringProperty(indexed=True)
 #     triggerids = ndb.IntegerProperty(repeated=True)
