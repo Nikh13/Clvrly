@@ -5,7 +5,7 @@ from os.path import dirname
 
 from google.appengine.ext.webapp import template
 
-from beacon.models import Beacon, Group, Trigger
+from beacon.models import Beacon, Action, Rule
 import beacon.constants as beacon_constants
 
 
@@ -22,159 +22,189 @@ def render_template(self, template_name, template_values):
     )
     self.response.out.write(template.render(template_path, template_values))
 
+# class SingleGroup(webapp2.RequestHandler):
+
+#     def get(self, key):
+#         # Preempt cycles
+#         from event.models import get_building_str
+#         group = None
+#         if key and key != 'add':
+#             group = Group.get_by_id(int(key))
+#         if group:
+#             groupjson = {
+#                 "id": key,
+#                 "nickname": group.nickname,
+#                 "valid": True,
+#                 "notnew": True
+#             }
+#             building_str = get_building_str(group.building)
+#             groupjson.update({building_str: True})
+#             triggers = []
+#             for trigger in Trigger.query():
+#                 triggerjson = {
+#                     "nickname": trigger.nickname,
+#                     "id": trigger.key.id(),
+#                 }
+#                 if trigger.key.id() in group.triggerids:
+#                     triggerjson.update({"valid": True})
+#                 else:
+#                     triggerjson.update({"valid": False})
+#                 triggers.append(triggerjson)
+#             groupjson.update({"triggers": triggers})
+#             final = {"group": groupjson}
+#             template = JINJA_ENVIRONMENT.get_template('single_group.html')
+#             self.response.write(template.render(final))
+#         else:
+#             final = {}
+#             template = JINJA_ENVIRONMENT.get_template('404.html')
+#             self.response.write(template.render(final))
+
+
+# class SingleTrigger(webapp2.RequestHandler):
+#     def get(self, key):
+#         trigger = None
+#         if key and key != 'add':
+#             trigger = Trigger.get_by_id(int(key))
+#         if trigger:
+#             triggerjson = {
+#                 "id": key,
+#                 "nickname": trigger.nickname,
+#                 "linktype": trigger.linktype,
+#                 "triggerlink": trigger.triggerlink,
+#                 "valid": True,
+#                 "notnew": True,
+#             }
+#             groups = []
+#             for group in Group.query():
+#                 groupjson = {
+#                     "nickname": group.nickname,
+#                     "id": group.key.id()
+#                 }
+#                 if key in group.triggerids:
+#                     groupjson.update({"valid": True})
+#                 else:
+#                     groupjson.update({"valid": False})
+#                 groups.append(groupjson)
+#             triggerjson.update({"groups": groups})
+#         else:
+#             triggerjson = {
+#                 "nickname": None,
+#                 "groups": None,
+#                 "notnew": False,
+#                 "valid": True,
+#             }
+#         final = {"trigger": triggerjson}
+#         template = JINJA_ENVIRONMENT.get_template('single_trigger.html')
+#         self.response.write(template.render(final))
+
+
+class SingleAction(webapp2.RequestHandler):
+    def post(self, key):
+        actionid = self.request.get("id")
+        nickname = self.request.get("nickname")
+        type = self.request.get("type")
+        description = self.request.get("description")
+        payload = self.request.get("payload")
+        try:
+            keyid = int(actionid)
+            action = Action.get_by_id(keyid)
+        except Exception:
+            action = None
+        if action is None:
+            action = Action(
+                nickname=nickname,
+                type=int(type),
+                description=description,
+                payload=payload
+            )
+            action.put()
+        else:
+            action.nickname = nickname
+            action.type = int(type)
+            action.description = description
+            action.put()
+        self.redirect("/actions")
+
+    def get(self, key):
+        action = None
+        if key and key != 'add':
+            try:
+                action = Action.get_by_id(int(key))
+            except:
+                action = None
+                self.redirect("/actions")
+                return
+
+        if action:
+            rules = Rule.query(Rule.actionid == action.key)
+            actionjson = {
+                "nickname": action.nickname,
+                "id": key,
+                "type": action.type,
+                "payload": action.payload,
+                "description": action.description,
+                "rules": rules
+            }
+        else:
+            actionjson = {
+                "nickname": None,
+                "id": None,
+                "type": None,
+                "payload": None,
+                "description": None,
+                "rules": None
+            }
+        template = JINJA_ENVIRONMENT.get_template('single_action.html')
+        self.response.write(template.render({'action': actionjson}))
+
+
+class SingleRule(webapp2.RequestHandler):
+    def post(self):
+        pass
+
+    def get(self, key):
+        pass
 
 class SingleBeacon(webapp2.RequestHandler):
     def get(self, key):
         beacon = None
         if key and key != 'add':
-            beacon = Beacon.get_by_id(int(key))
+            try:
+                beacon = Beacon.get_by_id(int(key))
+            except:
+                beacon = None
+                self.redirect("/beacons")
+                return
+
         if beacon:
+            rules = []
+            for rule in Rule.query():
+                for sr in rule.rules:
+                    if sr.beaconid == key:
+                        rules.append(rule)
+                        break
             beaconjson = {
-                "valid": True,
                 "nickname": beacon.nickname,
                 "id": key,
-                "notnew": True,
-                "uuid": beacon.beaconuuid
+                "uuid": beacon.uuid,
+                "description": beacon.description,
+                "rules": rules
             }
-            groups = []
-            for group in Group.query():
-                groupjson = {
-                    "nickname": group.nickname,
-                    "id": group.key.id()
-                }
-                if group.key.id() in beacon.groupids:
-                    groupjson.update({"valid": True})
-                else:
-                    groupjson.update({"valid": False})
-                groups.append(groupjson)
-            beaconjson.update({"groups": groups})
-            final = {"beacon": beaconjson}
-            template = JINJA_ENVIRONMENT.get_template('single_beacon.html')
-            self.response.write(template.render(final))
         else:
-            final = {}
-            template = JINJA_ENVIRONMENT.get_template('404.html')
-            self.response.write(template.render(final))
-
-
-class SingleGroup(webapp2.RequestHandler):
-
-    def get(self, key):
-        # Preempt cycles
-        from event.models import get_building_str
-        group = None
-        if key and key != 'add':
-            group = Group.get_by_id(int(key))
-        if group:
-            groupjson = {
-                "id": key,
-                "nickname": group.nickname,
-                "valid": True,
-                "notnew": True
-            }
-            building_str = get_building_str(group.building)
-            groupjson.update({building_str: True})
-            triggers = []
-            for trigger in Trigger.query():
-                triggerjson = {
-                    "nickname": trigger.nickname,
-                    "id": trigger.key.id(),
-                }
-                if trigger.key.id() in group.triggerids:
-                    triggerjson.update({"valid": True})
-                else:
-                    triggerjson.update({"valid": False})
-                triggers.append(triggerjson)
-            groupjson.update({"triggers": triggers})
-            final = {"group": groupjson}
-            template = JINJA_ENVIRONMENT.get_template('single_group.html')
-            self.response.write(template.render(final))
-        else:
-            final = {}
-            template = JINJA_ENVIRONMENT.get_template('404.html')
-            self.response.write(template.render(final))
-
-
-class SingleTrigger(webapp2.RequestHandler):
-    def get(self, key):
-        trigger = None
-        if key and key != 'add':
-            trigger = Trigger.get_by_id(int(key))
-        if trigger:
-            triggerjson = {
-                "id": key,
-                "nickname": trigger.nickname,
-                "linktype": trigger.linktype,
-                "triggerlink": trigger.triggerlink,
-                "valid": True,
-                "notnew": True,
-            }
-            groups = []
-            for group in Group.query():
-                groupjson = {
-                    "nickname": group.nickname,
-                    "id": group.key.id()
-                }
-                if key in group.triggerids:
-                    groupjson.update({"valid": True})
-                else:
-                    groupjson.update({"valid": False})
-                groups.append(groupjson)
-            triggerjson.update({"groups": groups})
-        else:
-            triggerjson = {
+            beaconjson = {
                 "nickname": None,
-                "groups": None,
-                "notnew": False,
-                "valid": True,
+                "id": None,
+                "uuid": None,
+                "description": None,
+                "rules": None
             }
-        final = {"trigger": triggerjson}
-        template = JINJA_ENVIRONMENT.get_template('single_trigger.html')
-        self.response.write(template.render(final))
+        template = JINJA_ENVIRONMENT.get_template('single_beacon.html')
+        self.response.write(template.render({'beacon': beaconjson}))
 
-
-class ListBeacons(webapp2.RequestHandler):
-    def get(self):
-        beacons = Beacon.query()
-        beacondetails = []
-        triggers = []
-        for beacon in beacons:
-            valuepair = {'beaconid': beacon.key.id()}
-            valuepair.update({'nickname': beacon.nickname})
-            valuepair.update({'beaconuuid': beacon.beaconuuid})
-            gs = beacon.groupids
-            groups = []
-            for g in gs:
-                group = {}
-                gdb = Group.get_by_id(int(g))
-                group.update({'nickname': gdb.nickname})
-                group.update({'id': g})
-                for t in gdb.triggerids:
-                    tdb = Trigger.get_by_id(int(t))
-                    trig = {}
-                    trig.update({'nickname': tdb.nickname, 'id': t})
-                    triggers.append(trig)
-                groups.append(group)
-
-            valuepair.update({'groups': groups})
-            valuepair.update({'triggers': triggers})
-            valuepair.update({'description': beacon.description})
-            beacondetails.append(valuepair)
-        final = {}
-        final.update({'beacons': beacondetails})
-        template = JINJA_ENVIRONMENT.get_template('manage_beacons.html')
-        self.response.write(template.render(final))
-
-
-class AddBeacon(webapp2.RequestHandler):
-    def post(self):
-        beaconid = self.request.get("beaconid")
+    def post(self, key):
+        beaconid = self.request.get("id")
         nickname = self.request.get("nickname")
-        beaconuuid = self.request.get("beaconuuid")
-        groupid = self.request.get_all("groupid")
-        groupids = []
-        for g in groupid:
-            groupids.append(int(g))
+        beaconuuid = self.request.get("uuid")
         description = self.request.get("description")
         try:
             keyid = int(beaconid)
@@ -184,29 +214,109 @@ class AddBeacon(webapp2.RequestHandler):
         if beacon is None:
             beacon = Beacon(
                 nickname=nickname,
-                beaconuuid=beaconuuid,
-                groupids=groupids,
+                uuid=beaconuuid,
                 description=description
             )
             beacon.put()
         else:
             beacon.nickname = nickname
-            beacon.beaconuuid = beaconuuid
-            beacon.groupids = groupids
+            beacon.uuid = beaconuuid
             beacon.description = description
             beacon.put()
         self.redirect("/beacons")
 
+
+class ListActions(webapp2.RequestHandler):
     def get(self):
-        beaconjson = {
-            "valid": True,
-            "nickname": None,
-            "groups": None,
-            "notnew": False,
-        }
-        final = {"beacon": beaconjson}
-        template = JINJA_ENVIRONMENT.get_template('single_beacon.html')
+        actions = Action.query()
+        data = []
+        for action in actions:
+            rules = Rule.query().filter(Rule.actionid == action.key)
+            beacons = []
+            for rule in rules:
+                for simplerule in rule.rules:
+                    beacons.append(Beacon.query(key=simplerule.beaconid))
+            data.append({
+                'id': action.key.id(),
+                'nickname': action.nickname,
+                'type': action.type,
+                'payload': action.payload,
+                'description': action.description,
+                'rules': rules,
+                'beacons': beacons
+                })
+
+        template = JINJA_ENVIRONMENT.get_template('manage_actions.html')
+        self.response.write(template.render({'actions': data}))
+
+
+class ListRules(webapp2.RequestHandler):
+    def get(self):
+        rules = Rule.query()
+        data = []
+        for rule in rules:
+            data.append({
+                'id': rule.key.id(),
+                'nickname': rule.nickname,
+                'description': rule.description,
+                'rules': rule.rules
+                })
+
+        template = JINJA_ENVIRONMENT.get_template('manage_rules.html')
+        self.response.write(template.render({'rules': data}))
+
+
+class ListBeacons(webapp2.RequestHandler):
+    def get(self):
+        beacons = Beacon.query()
+        beacondetails = []
+        for beacon in beacons:
+            valuepair = {'beaconid': beacon.key.id()}
+            valuepair.update({'nickname': beacon.nickname})
+            valuepair.update({'uuid': beacon.uuid})
+            valuepair.update({'description': beacon.description})
+            beacondetails.append(valuepair)
+        final = {}
+        final.update({'beacons': beacondetails})
+        template = JINJA_ENVIRONMENT.get_template('manage_beacons.html')
         self.response.write(template.render(final))
+
+
+# class AddBeacon(webapp2.RequestHandler):
+#     def post(self):
+#         beaconid = self.request.get("beaconid")
+#         nickname = self.request.get("nickname")
+#         beaconuuid = self.request.get("beaconuuid")
+#         description = self.request.get("description")
+#         try:
+#             keyid = int(beaconid)
+#             beacon = Beacon.get_by_id(keyid)
+#         except Exception:
+#             beacon = None
+#         if beacon is None:
+#             beacon = Beacon(
+#                 nickname=nickname,
+#                 uuid=beaconuuid,
+#                 description=description
+#             )
+#             beacon.put()
+#         else:
+#             beacon.nickname = nickname
+#             beacon.uuid = beaconuuid
+#             beacon.description = description
+#             beacon.put()
+#         self.redirect("/beacons")
+
+#     def get(self):
+#         beaconjson = {
+#             "valid": True,
+#             "nickname": None,
+#             "groups": None,
+#             "notnew": False,
+#         }
+#         final = {"beacon": beaconjson}
+#         template = JINJA_ENVIRONMENT.get_template('single_beacon.html')
+#         self.response.write(template.render(final))
 
 
 class ListGroups(webapp2.RequestHandler):
@@ -427,28 +537,20 @@ class DumpData(webapp2.RequestHandler):
     def get(self):
         beacons = []
         for beacon in Beacon.query():
-            beajson = {
-                "id": beacon.beaconuuid,
-                "groupids": beacon.groupids
-            }
-            beacons.append(beajson)
-        groups = []
-        for group in Group.query():
-            groupjson = {
-                "id": beacon.key.id(),
-                "triggerids": group.triggerids
-            }
-            groups.append(groupjson)
-        triggers = []
-        for trigger in Trigger.query():
-            trigjson = {
-                "id": trigger.key.id(),
-                "linktype": trigger.linktype,
-                "triggerlink": trigger.triggerlink,
-                "triggerwhen": trigger.triggerwhen
-            }
-            triggers.append(trigjson)
-        data = {"beacons": beacons, "groups": groups, "triggers": triggers}
+            beacons.append({
+                "id": beacon.uuid,
+                "nickname": beacon.nickname,
+                "description": beacon.description
+            })
+        actions = []
+        for action in Action.query():
+            actions.append({
+                "nickname": action.nickname,
+                "description": action.description,
+                "payload": action.payload,
+                "type": action.type
+                })
+        data = {"beacons": beacons, "actions": actions}
         self.response.write(data)
 
 

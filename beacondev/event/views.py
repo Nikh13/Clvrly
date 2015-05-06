@@ -3,7 +3,7 @@ import os
 
 from datetime import datetime, timedelta
 
-from beacon.models import Beacon, Group, Trigger
+from beacon.models import Beacon, Action, Rule
 from event.models import Event, Building, get_building_obj
 from event.models import get_building_str
 from utils import JINJA_ENVIRONMENT

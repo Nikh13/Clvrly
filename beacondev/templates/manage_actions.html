@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block page %}
+<div class="container">
+    <div class="row" style="padding:10px;">
+        <div class="alert alert-info">
+            <h4><strong>Actions</strong></h4>
+            <span><p>Set up and manage your Actions from this panel.</p><a class="btn btn-default" href="/action/add">Add a Action</a></span>
+        </div>
+    </div>
+    {% if actions %}
+    <div> <!-- List of actions -->
+    <div class="row">
+        <div class="col-md-10" style="padding:10px;">
+            {% for action in actions %}
+            <div class="thumbnail" style="padding:10px;"><!-- Single actions -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4><strong><a href="/action/{{ action.id }}">{{ action.nickname }}</a></strong></h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-8">      
+                        <p>
+                            {{ action.description }}
+                        </p>
+                    </div>
+                </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-9">
+                    <p>
+                      <i class="icon-user"></i> Beacons(s): 
+                      {% for beacon in action.beacons %}
+                        <a href="./beacons/{{ beacon.id }}"><span class="label label-info"> {{ beacon.nickname }}</span></a>
+                      {% endfor %}
+                    </p>
+                    <p>
+                      <i class="icon-user"></i> Rules(s): 
+                      {% for rule in action.rules %}
+                        <a href="./rules/{{ rule.id }}"><span class="label label-warning"> {{ rule.nickname }}</span></a>
+                      {% endfor %}
+                    </p>
+                </div>
+                <div class="col-md-3"
+                    <p><a class="btn btn-primary pull-right" href="./action/{{ action.groupid }}">More Info</a></p>
+                    </div>
+            </div>
+            </div><!-- End Single group -->
+            <hr>
+            {% endfor %}
+        </div>
+      </div>
+   </div><!-- End List -->
+   {% else %}
+   <div class="row">
+        <div class="col-md-8">
+            <h1>You currently have no actions</h1>
+        </div>
+   </div>
+   {% endif %}
+   
+</div> 
+<!-- /container -->
+{% endblock %}
+

@@ -1,52 +1,63 @@
 {% extends 'base.html' %}
 {% block page %}
 <div class="container">
-    {% if beacon %}
-        {% if beacon.id %}
+    {% if action %}
+        {% if action.id %}
         <div class="row" style="padding:10px;">
             <div class="alert alert-info">
-                <h4><strong>Beacon Properties</strong></h4>
-                <p>Edit your beacon properties here</p>
+                <h4><strong>Action Properties</strong></h4>
+                <p>Edit your action properties here</p>
             </div>
         </div>
         <div class="row">
             <div class="col-md-8">
-                <form class="form-horizontal" action="/beacon/add" method="POST">
+                <form class="form-horizontal" action="/action/add" method="POST">
                 <fieldset>
                     <!-- Text input-->
                     <div class="form-group">
                       <label class="col-md-4 control-label" for="nickname">Nickname</label>
                       <div class="col-md-8">
 
-                      <input id="nickname" name="nickname" type="text" placeholder="Blue Beacon" value="{{ beacon.nickname }}" class="form-control input-md" required="">
+                      <input id="nickname" name="nickname" type="text" placeholder="popup" value="{{ action.nickname }}" class="form-control input-md" required="">
                       <span class="help-block">Nicknames are only used for your convenience. </span>
                       </div>
                     </div>
 
                     <!-- Text input-->
                     <div class="form-group">
-                      <label class="col-md-4 control-label" for="beaconid">Beacon UUID</label>
+                      <label class="col-md-4 control-label" for="type">Action type</label>
                       <div class="col-md-8">
-                      <input id="beaconid" name="uuid" type="text" placeholder="Ex. 124414" class="form-control input-md" required="" value="{{ beacon.uuid }}">
+                      <select name="type">
+                                <option value="0">Notification</option>
+                                <option value="1">Contextual Data</option>
+                                <option value="2">Something else</option>
+                      </select>
+                      <span class="help-block">Your Action's type</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-md-4 control-label" for="payload">Action payload</label>
+                      <div class="col-md-8">
+                      <input id="payload" name="payload" type="text" placeholder="Ex. 124414" class="form-control input-md" required="" value="{{ action.payload }}">
 
-                      <span class="help-block">Your Beacon's Unique Identifier</span>
+                      <span class="help-block">Your Action's payload</span>
                       </div>
                     </div>
                     <div class="form-group">
                       <label class="col-md-4 control-label" for="description">Description</label>
                       <div class="col-md-8">
-                      <input id="description" name="description" type="text" placeholder="Ex. NW Corner of room" class="form-control input-md" required="" value="{{ beacon.description }}">
+                      <input id="description" name="description" type="text" placeholder="Ex. NW Corner of room" class="form-control input-md" required="" value="{{ action.description }}">
                       <span class="help-block">Describe this beacon (Location, etc)</span>
                       </div>
                     </div>
-                    <input type="hidden" name="id" style="display: none" value="{{ beacon.id }}"/>
+                    <input type="hidden" name="id" style="display: none" value="{{ action.id }}"/>
 
 
                     <!-- Button -->
                     <div class="form-group">
                       <label class="col-md-4 control-label" for="submit">and lastly</label>
                       <div class="col-md-5">
-                        <button id="submit" name="submit" class="btn btn-success">Save Beacon</button>
+                        <button id="submit" name="submit" class="btn btn-success">Save Action</button>
                       </div>
                     </div>
 
@@ -57,31 +68,42 @@
         {% else %}
         <div class="row" style="padding:10px;">
             <div class="alert alert-info">
-                <h4><strong>Add Beacon Properties</strong></h4>
-                <p>Add your beacon properties here</p>
+                <h4><strong>Add Action Properties</strong></h4>
+                <p>Add your action properties here</p>
             </div>
         </div>
         <div class="row">
             <div class="col-md-8">
-                <form class="form-horizontal" action="/beacon/add" method="POST">
-                    <fieldset>
+                <form class="form-horizontal" action="/action/add" method="POST">
+                <fieldset>
                     <!-- Text input-->
                     <div class="form-group">
                       <label class="col-md-4 control-label" for="nickname">Nickname</label>
                       <div class="col-md-8">
 
-                      <input id="nickname" name="nickname" type="text" placeholder="" class="form-control input-md" required="">
+                      <input id="nickname" name="nickname" type="text" placeholder="popup" class="form-control input-md" required="">
                       <span class="help-block">Nicknames are only used for your convenience. </span>
                       </div>
                     </div>
 
                     <!-- Text input-->
                     <div class="form-group">
-                      <label class="col-md-4 control-label" for="beaconid">Beacon UUID</label>
+                      <label class="col-md-4 control-label" for="type">Action type</label>
                       <div class="col-md-8">
-                      <input id="beaconid" name="uuid" type="text" placeholder="Ex. 124414" class="form-control input-md" required="">
+                      <select name="type">
+                                <option value="0">Notification</option>
+                                <option value="1">Contextual Data</option>
+                                <option value="2">Something else</option>
+                      </select>
+                      <span class="help-block">Your Action's type</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-md-4 control-label" for="payload">Action payload</label>
+                      <div class="col-md-8">
+                      <input id="payload" name="payload" type="text" placeholder="Ex. 124414" class="form-control input-md" required="" >
 
-                      <span class="help-block">Your Beacon's Unique Identifier</span>
+                      <span class="help-block">Your Action's payload</span>
                       </div>
                     </div>
                     <div class="form-group">
@@ -91,40 +113,19 @@
                       <span class="help-block">Describe this beacon (Location, etc)</span>
                       </div>
                     </div>
+                    <input type="hidden" name="id" style="display: none" value="{{ action.id }}"/>
 
-                    
-                    {% if beacon.groups %}
-                    <!-- Multiple Checkboxes -->
-                    <div class="form-group">
-                      <label class="col-md-4 control-label" for="checkboxes">Select Groups</label>
-                      <div class="col-md-8">
-                      {% for group in beacon.groups %}
-                      <div class="checkbox">
-                        <label for="groupid">
-                          <input type="checkbox" name="groupid" id="groupid" value="{{group.id}}"
-                          {% if group.valid %}checked{%endif%}>{{group.nickname}}</label>
-                       </div>
-                    {% endfor %}
-                    <span class="help-block">Select one or more groups</span>
-                    </div>
-                    </div>
-                    {% else %}
-                    <div class="form-group">
-                      <div class="col-md-4"></div>
-                      <label class="col-md-4">No groups defined yet</label>
-                    </div>
-                    {% endif%}
+
                     <!-- Button -->
                     <div class="form-group">
                       <label class="col-md-4 control-label" for="submit">and lastly</label>
                       <div class="col-md-5">
-                        <button id="submit" name="submit" class="btn btn-success">Add Beacon</button>
+                        <button id="submit" name="submit" class="btn btn-success">Add Action</button>
                       </div>
                     </div>
-                    <input type="hidden" name="id" style="display: none" value="{{ beacon.id }}"/>
 
                     </fieldset>
-                </form>
+                    </form>
             </div>
         </div>
         {% endif %}
