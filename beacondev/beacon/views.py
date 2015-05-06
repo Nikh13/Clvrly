@@ -605,7 +605,7 @@ class DumpData(webapp2.RequestHandler):
         rules = []
         jsons = JSONDump.query()
         for js in jsons:
-            rules = json.dumps(js.jsondata)
+            rules = json.loads(js.jsondata)
         data = {"beacons": beacons, "actions": actions, "rules": rules}
         self.response.write(json.dumps(data))
 
