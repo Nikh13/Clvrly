@@ -548,10 +548,43 @@ class DumpData(webapp2.RequestHandler):
                 "nickname": action.nickname,
                 "description": action.description,
                 "payload": action.payload,
-                "type": action.type
+                "type": action.type,
+                "id": action.key.id()
                 })
-        data = {"beacons": beacons, "actions": actions}
-        self.response.write(data)
+        rules= [
+                {
+                    'rule_id': 1,
+                    'action_id': 1,
+                    'priority': 1,
+                    'rules': [
+                                {
+                                    'uuid':'F4:20:ED:E3:8F:FB',
+                                    'distance': 1
+                                },
+                                {
+                                    'uuid':'DA:94:8B:51:91:82',
+                                    'distance': 0
+                                }
+                    ]
+                },
+                {
+                    'rule_id': 2,
+                    'action_id': 2,
+                    'priority': 2,
+                    'rules': [
+                                {
+                                    'uuid':'F4:20:ED:E3:8F:FB',
+                                    'distance': 1
+                                },
+                                {
+                                    'uuid':'DE:54:21:58:C3:9C',
+                                    'distance': 0
+                                }
+                    ]
+                }
+            ]
+        data = {"beacons": beacons, "actions": actions, "rules": rules}
+        self.response.write(json.dumps(data))
 
 
 class SampleData(webapp2.RequestHandler):
