@@ -26,15 +26,15 @@ SAMPLE_DATA = {
     'actions':[
         {
             'action_id': 1,
-            'description': 'desc 1',
+            'description': 'Thank you',
             'type': 0,
-            'payload': 'hello there'
+            'payload': 'Thank you for shopping with us. Hope you visit us again.'
         },
         {
             'action_id': 2,
-            'description': 'desc 1',
+            'description': 'Exciting offer!',
             'type': 1,
-            'payload': 'good bye'
+            'payload': 'Get Rs 100 off on stationary, only for today!'
         }
     ],
     'rules': [
