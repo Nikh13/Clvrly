@@ -122,6 +122,7 @@ class SingleAction(webapp2.RequestHandler):
             action.nickname = nickname
             action.type = int(type)
             action.description = description
+            action.payload = payload
             action.put()
         self.redirect("/actions")
 
@@ -606,7 +607,7 @@ class DumpData(webapp2.RequestHandler):
         jsons = JSONDump.query()
         for js in jsons:
             rules = json.loads(js.jsondata)
-        data = {"beacons": beacons, "actions": actions, "rules": rules.rules}
+        data = {"beacons": beacons, "actions": actions, "rules": rules['data']}
         self.response.write(json.dumps(data))
 
 
